@@ -261,11 +261,11 @@ SATAssignment SubgraphToSATExtractor::extract_assignment(
     SATAssignment assignment(formula_3sat.num_variables());
     std::set<int> assigned_vars;
     
-    for (const auto& [clique_node, graph_node] : node_mapping) {
+    // for (const auto& [clique_node, graph_node] : node_mapping) {
         // clique_node = (clause_id, lit_idx)
         // Für einfachheit: Wir verwenden hier nur Teile des Mappings
         // In voller Implementierung würde das Mapping explizit konstruiert
-    }
+    // }
     
     // Greedy-Ansatz: Für unzugewiesene Variablen, setze auf True
     for (int var = 1; var <= formula_3sat.num_variables(); ++var) {

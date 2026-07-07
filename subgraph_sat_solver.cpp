@@ -390,7 +390,6 @@ CNFFormula SATSolverUtils::parse_dimacs_string(const std::string& dimacs_text) {
         if (line[0] == 'p') {
             std::istringstream header(line);
             std::string p, cnf;
-            int num_clauses;
             
             header >> p >> cnf >> num_vars;
             formula.set_num_variables(num_vars);

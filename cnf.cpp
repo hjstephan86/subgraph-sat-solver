@@ -316,9 +316,7 @@ void CNFFormula::to_file(const std::string& filename) const {
     file.close();
 }
 
-void CNFFormula::print() const {
-    auto stats = compute_statistics();
-    
+void CNFFormula::print() const {    
     std::cout << "\nc CNF Formula\n";
     std::cout << "p cnf " << num_vars_ << " " << clauses_.size() << "\n";
     
