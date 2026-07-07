@@ -99,20 +99,28 @@ SATSolverResult SubgraphSATSolver::solve_dimacs_file(
     }
 }
 
-SATSolverResult SubgraphSATSolver::solve_dimacs_string(
-    const std::string& cnf_string) {
-    
-    std::string temp_file = config_.temp_dir + "/sat_solver_input_XXXXXX";
+SATSolverResult SubgraphSATSolver::solve_dimacs_string(const std::string& cnf_string) {
+    std::string temp_file;
     
     #ifdef _WIN32
-        char temp_template[] = "sat_solver_input_XXXXXX";
-        _mktemp(temp_template);
-        temp_file = config_.temp_dir + "/" + temp_template;
+        // Generiere einen eindeutigen Namen mittels Zeitstempel und Zufall/Counter
+        static int counter = 0;
+        auto now = std::chrono::system_clock::now().time_since_epoch().count();
+        std::ostringstream oss;
+        oss << config_.temp_dir << "/sat_solver_input_" << now << "_" << counter++;
+        temp_file = oss.str();
         
         std::ofstream file(temp_file);
+        if (!file.is_open()) {
+            SATSolverResult result;
+            result.status = SATSolverResult::SAT_ERROR;
+            result.error_message = "Failed to open temporary file: " + temp_file;
+            return result;
+        }
         file << cnf_string;
         file.close();
     #else
+        temp_file = config_.temp_dir + "/sat_solver_input_XXXXXX";
         int fd = mkstemp(&temp_file[0]);
         if (fd < 0) {
             SATSolverResult result;
@@ -127,7 +135,7 @@ SATSolverResult SubgraphSATSolver::solve_dimacs_string(
     auto result = solve_dimacs_file(temp_file);
     
     #ifdef _WIN32
-        DeleteFile(temp_file.c_str());
+        DeleteFileA(temp_file.c_str());
     #else
         unlink(temp_file.c_str());
     #endif
@@ -257,51 +265,60 @@ bool SubgraphSATSolver::call_subgraph_binary(
     std::string& result_json) {
     
     #ifdef _WIN32
-        // Windows-spezifische Implementierung
-        std::string temp_input = config_.temp_dir + "/subgraph_input_XXXXXX";
-        std::string temp_output = config_.temp_dir + "/subgraph_output_XXXXXX";
+        // Windows-spezifische Implementierung (MinGW & MSVC kompatibel)
+        static int file_counter = 0;
+        auto now = std::chrono::system_clock::now().time_since_epoch().count();
+        DWORD pid = GetCurrentProcessId();
+
+        // Generiere garantiert eindeutige Dateinamen ohne _mktemp
+        std::ostringstream oss_in, oss_out;
+        oss_in << config_.temp_dir << "/subgraph_input_" << now << "_" << pid << "_" << file_counter++;
+        oss_out << config_.temp_dir << "/subgraph_output_" << now << "_" << pid << "_" << file_counter++;
         
-        char input_template[] = "subgraph_input_XXXXXX";
-        char output_template[] = "subgraph_output_XXXXXX";
-        
-        _mktemp(input_template);
-        _mktemp(output_template);
-        
-        temp_input = config_.temp_dir + "/" + input_template;
-        temp_output = config_.temp_dir + "/" + output_template;
+        std::string temp_input = oss_in.str();
+        std::string temp_output = oss_out.str();
         
         // Schreibe Input-JSON
         std::ofstream input_file(temp_input);
+        if (!input_file.is_open()) {
+            std::cerr << "Failed to open temporary input file: " << temp_input << "\n";
+            return false;
+        }
         std::string combined_json = "{\n  \"G\": " + source_json + ",\n  \"H\": " + target_json + "\n}";
         input_file << combined_json;
         input_file.close();
         
-        // Rufe Binary auf
+        // Rufe Binary auf (Pfade in Anführungszeichen setzen wegen möglicher Leerzeichen)
         std::string cmd = "\"" + config_.subgraph_binary_path + "\" \"" + temp_input + "\" \"" + temp_output + "\"";
         
-        int ret = system(cmd.c_str());
+        int ret = std::system(cmd.c_str());
         
         if (ret != 0) {
             std::cerr << "Subgraph binary execution failed with code: " << ret << "\n";
-            DeleteFile(temp_input.c_str());
-            DeleteFile(temp_output.c_str());
+            DeleteFileA(temp_input.c_str());
+            DeleteFileA(temp_output.c_str());
             return false;
         }
         
         // Lese Output
         std::ifstream output_file(temp_output);
+        if (!output_file.is_open()) {
+            std::cerr << "Failed to open temporary output file: " << temp_output << "\n";
+            DeleteFileA(temp_input.c_str());
+            return false;
+        }
         std::stringstream buffer;
         buffer << output_file.rdbuf();
         result_json = buffer.str();
         output_file.close();
         
         // Cleanup
-        DeleteFile(temp_input.c_str());
-        DeleteFile(temp_output.c_str());
+        DeleteFileA(temp_input.c_str());
+        DeleteFileA(temp_output.c_str());
         
         return true;
     #else
-        // Linux/Unix-Implementierung
+        // Linux/Unix-Implementierung (Unverändert)
         std::string temp_input = config_.temp_dir + "/subgraph_input_XXXXXX";
         int fd_input = mkstemp(&temp_input[0]);
         
@@ -316,6 +333,11 @@ bool SubgraphSATSolver::call_subgraph_binary(
         
         std::string temp_output = config_.temp_dir + "/subgraph_output_XXXXXX";
         int fd_output = mkstemp(&temp_output[0]);
+        if (fd_output < 0) {
+            std::cerr << "Failed to create output temp file\n";
+            unlink(temp_input.c_str());
+            return false;
+        }
         close(fd_output);
         
         pid_t pid = fork();
@@ -347,6 +369,11 @@ bool SubgraphSATSolver::call_subgraph_binary(
         }
         
         std::ifstream output_file(temp_output);
+        if (!output_file.is_open()) {
+            unlink(temp_input.c_str());
+            unlink(temp_output.c_str());
+            return false;
+        }
         std::stringstream buffer;
         buffer << output_file.rdbuf();
         result_json = buffer.str();
