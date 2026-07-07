@@ -1,3 +1,4 @@
 .vscode/
 build/*
-!build/libsubgraph_lib.a
+!build/libsatlib.a
+!build/subgraph-sat-solver.exe
