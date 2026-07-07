@@ -10,6 +10,11 @@
 #include <sstream>
 #include <cassert>
 
+#include <string>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using namespace sat;
 
 // =================================================================
@@ -35,6 +40,24 @@ int failed_count = 0;
 #define ASSERT_EQ(a, b) \
     if ((a) != (b)) throw std::logic_error("Assertion failed: " #a " == " #b)
 
+
+// =================================================================
+// Helper Functions
+// =================================================================
+
+std::string get_test_path(const std::string& filename) {
+#ifdef _WIN32
+    char temp_path[MAX_PATH];
+    DWORD path_len = GetTempPathA(MAX_PATH, temp_path);
+    if (path_len > 0) {
+        return std::string(temp_path) + filename;
+    }
+    return ".\\" + filename; // Fallback: aktuelles Verzeichnis
+#else
+    return get_test_path(filename); // Linux / macOS Standard
+#endif
+}
+
 // =================================================================
 // Test Cases
 // =================================================================
@@ -49,11 +72,11 @@ void test_parse_simple_cnf() {
         "-1 -2 0\n";
     
     std::istringstream iss(dimacs);
-    std::ofstream temp_file("/tmp/test_simple.cnf");
+    std::ofstream temp_file(get_test_path("test_simple.cnf"));
     temp_file << dimacs;
     temp_file.close();
     
-    CNFFormula formula("/tmp/test_simple.cnf");
+    CNFFormula formula(get_test_path("test_simple.cnf"));
     
     ASSERT_EQ(formula.num_variables(), 2);
     ASSERT_EQ(formula.num_clauses(), 2);
@@ -70,11 +93,11 @@ void test_parse_3sat() {
         "1 -3 2 0\n"
         "2 3 -1 0\n";
     
-    std::ofstream temp_file("/tmp/test_3sat.cnf");
+    std::ofstream temp_file(get_test_path("test_3sat.cnf"));
     temp_file << dimacs;
     temp_file.close();
     
-    CNFFormula formula("/tmp/test_3sat.cnf");
+    CNFFormula formula(get_test_path("test_3sat.cnf"));
     
     ASSERT_EQ(formula.num_variables(), 3);
     ASSERT_EQ(formula.num_clauses(), 2);
@@ -91,11 +114,11 @@ void test_to_3sat_conversion() {
         "p cnf 4 1\n"
         "1 2 3 4 0\n";
     
-    std::ofstream temp_file("/tmp/test_4sat.cnf");
+    std::ofstream temp_file(get_test_path("test_4sat.cnf"));
     temp_file << dimacs;
     temp_file.close();
     
-    CNFFormula formula("/tmp/test_4sat.cnf");
+    CNFFormula formula(get_test_path("test_4sat.cnf"));
     
     ASSERT(!formula.is_valid_3sat());
     
@@ -118,11 +141,11 @@ void test_simplify() {
         "1 2 0\n"
         "-1 -2 0\n";
     
-    std::ofstream temp_file("/tmp/test_simplify.cnf");
+    std::ofstream temp_file(get_test_path("test_simplify.cnf"));
     temp_file << dimacs;
     temp_file.close();
     
-    CNFFormula formula("/tmp/test_simplify.cnf");
+    CNFFormula formula(get_test_path("test_simplify.cnf"));
     
     int clauses_before = formula.num_clauses();
     formula.simplify();
@@ -229,11 +252,11 @@ void test_3sat_to_clique_reduction() {
         "1 2 -1 0\n"
         "-1 2 -2 0\n";
     
-    std::ofstream temp_file("/tmp/test_clique.cnf");
+    std::ofstream temp_file(get_test_path("test_clique.cnf"));
     temp_file << dimacs;
     temp_file.close();
     
-    CNFFormula formula("/tmp/test_clique.cnf");
+    CNFFormula formula(get_test_path("test_clique.cnf"));
     ThreeSATToCliqueReducer reducer(formula);
     
     auto [clique_graph, clique_size] = reducer.reduce();
