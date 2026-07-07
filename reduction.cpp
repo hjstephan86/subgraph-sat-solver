@@ -246,7 +246,7 @@ bool SATToSubgraphReducer::validate_reduction() const {
 
 SATAssignment SubgraphToSATExtractor::extract_assignment(
     const CNFFormula& formula_3sat,
-    const std::vector<std::pair<int, int>>& node_mapping) {
+    const std::vector<std::pair<int, int>>& /*node_mapping*/) {
     
     /**
      * Gegeben ein Mapping von Clique-Knoten zu Graph-Knoten:
