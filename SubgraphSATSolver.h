@@ -13,6 +13,8 @@
 #include <optional>
 #include <vector>
 
+void test_solver_parse_subgraph_result();
+
 namespace sat {
 
 /**
@@ -86,6 +88,8 @@ public:
     SATSolverResult solve_dimacs_file(const std::string& cnf_file);
     SATSolverResult solve_dimacs_string(const std::string& cnf_string);
     SATSolverResult solve_formula(const CNFFormula& formula);
+
+    friend void ::test_solver_parse_subgraph_result();
     
 private:
     SATSolverConfig config_;
