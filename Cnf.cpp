@@ -1,10 +1,10 @@
 /**
- * cnf.cpp
+ * Cnf.cpp
  * 
  * Implementierung: CNF-Parser, Normalisierung und Analyse
  */
 
-#include "cnf.h"
+#include "Cnf.h"
 #include <iostream>
 #include <cctype>
 

@@ -1,5 +1,5 @@
 /**
- * reduction.h
+ * Reduction.h
  * 
  * Reduktions-Algorithmen für die SAT-Lösung via Subgraph-Isomorphismus
  * 
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "cnf.h"
+#include "Cnf.h"
 #include <vector>
 #include <set>
 #include <map>

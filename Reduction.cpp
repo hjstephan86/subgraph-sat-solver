@@ -1,10 +1,10 @@
 /**
- * reduction.cpp
+ * Reduction.cpp
  * 
  * Implementierung: Komplette Reduktionskette
  */
 
-#include "reduction.h"
+#include "Reduction.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>

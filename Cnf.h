@@ -1,5 +1,5 @@
 /**
- * cnf.h
+ * Cnf.h
  * 
  * CNF-Parser und 3-SAT Datenstrukturen
  * 

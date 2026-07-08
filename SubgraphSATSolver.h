@@ -1,5 +1,5 @@
 /**
- * subgraph_sat_solver.h
+ * SubgraphSATSolver.h
  * 
  * Hauptklasse: SubgraphSATSolver
  * Polynomial-time SAT-Solver via Subgraph-Isomorphismus
@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "cnf.h"
-#include "reduction.h"
+#include "Cnf.h"
+#include "Reduction.h"
 #include <string>
 #include <optional>
 #include <vector>

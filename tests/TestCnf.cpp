@@ -1,11 +1,11 @@
 /**
- * tests/test_cnf.cpp
+ * tests/TestCnf.cpp
  * 
  * Unit Tests für CNF Parser und Reduktionen
  */
 
-#include "cnf.h"
-#include "reduction.h"
+#include "Cnf.h"
+#include "Reduction.h"
 #include <iostream>
 #include <sstream>
 #include <cassert>

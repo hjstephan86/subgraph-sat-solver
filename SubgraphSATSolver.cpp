@@ -1,11 +1,11 @@
 /**
- * subgraph_sat_solver.cpp
+ * SubgraphSATSolver.cpp
  * 
  * WINDOWS-KOMPATIBLE VERSION
- * Hauptimplementierung: Subgraph-SAT-Solver
+ * Hauptimplementierung: SubgraphSATSolver
  */
 
-#include "subgraph_sat_solver.h"
+#include "SubgraphSATSolver.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -74,7 +74,7 @@ SubgraphSATSolver::SubgraphSATSolver(const SATSolverConfig& config)
     : config_(config) {
     
     if (config_.verbose) {
-        std::cout << "[Solver] Initializing Subgraph-SAT-Solver\n";
+        std::cout << "[Solver] Initializing SubgraphSATSolver\n";
         std::cout << "  Subgraph binary: " << config_.subgraph_binary_path << "\n";
         std::cout << "  Temp directory: " << config_.temp_dir << "\n";
         std::cout << "  Timeout: " << config_.subgraph_timeout_sec << " sec\n";

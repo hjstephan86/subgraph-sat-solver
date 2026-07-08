@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(subgraph_sat_solver CXX)
+project(SubgraphSATSolver CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -34,34 +34,34 @@ endif()
 # =================================================================
 
 set(SAT_SOLVER_SOURCES
-    cnf.cpp
-    reduction.cpp
-    subgraph_sat_solver.cpp
+    Cnf.cpp
+    Reduction.cpp
+    SubgraphSATSolver.cpp
 )
 
 set(SAT_SOLVER_HEADERS
-    cnf.h
-    reduction.h
-    subgraph_sat_solver.h
+    Cnf.h
+    Reduction.h
+    SubgraphSATSolver.h
 )
 
 # Include directory
 set(SAT_SOLVER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # =================================================================
-# Main Executable: subgraph-sat-solver
+# Main Executable: SubgraphSATSolver
 # =================================================================
 
-add_executable(subgraph-sat-solver
+add_executable(SubgraphSATSolver
     ${SAT_SOLVER_SOURCES}
-    sat_main.cpp
+    main.cpp
 )
 
-target_include_directories(subgraph-sat-solver PRIVATE
+target_include_directories(SubgraphSATSolver PRIVATE
     ${SAT_SOLVER_INCLUDE_DIR}
 )
 
-target_link_libraries(subgraph-sat-solver PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(SubgraphSATSolver PRIVATE nlohmann_json::nlohmann_json)
 
 # =================================================================
 # Library: satlib (für externe Nutzung)
@@ -84,24 +84,24 @@ target_link_libraries(satlib PUBLIC nlohmann_json::nlohmann_json)
 enable_testing()
 
 # Test executable
-add_executable(sat_tests
+add_executable(sat-tests
     ${SAT_SOLVER_SOURCES}
-    tests/test_cnf.cpp
+    tests/TestCnf.cpp
 )
 
-target_include_directories(sat_tests PRIVATE
+target_include_directories(sat-tests PRIVATE
     ${SAT_SOLVER_INCLUDE_DIR}
 )
 
-target_link_libraries(sat_tests PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(sat-tests PRIVATE nlohmann_json::nlohmann_json)
 
-add_test(NAME SAT-Solver-Tests COMMAND sat_tests)
+add_test(NAME SAT-Solver-Tests COMMAND sat-tests)
 
 # =================================================================
 # Installation
 # =================================================================
 
-install(TARGETS subgraph-sat-solver satlib
+install(TARGETS SubgraphSATSolver satlib
     RUNTIME DESTINATION bin
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
@@ -116,7 +116,7 @@ install(FILES ${SAT_SOLVER_HEADERS}
 # =================================================================
 
 message(STATUS "")
-message(STATUS "Subgraph-SAT-Solver Configuration")
+message(STATUS "SubgraphSATSolver Configuration")
 message(STATUS "==================================")
 message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
@@ -129,9 +129,9 @@ endif()
 message(STATUS "Installation Prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "")
 message(STATUS "Targets:")
-message(STATUS "  - subgraph-sat-solver (executable)")
+message(STATUS "  - SubgraphSATSolver (executable)")
 message(STATUS "  - satlib (static library)")
-message(STATUS "  - sat_tests (test executable)")
+message(STATUS "  - sat-tests (test executable)")
 message(STATUS "")
 message(STATUS "To build:")
 message(STATUS "  cmake --build . -j4")

@@ -1,19 +1,19 @@
 /**
  * main.cpp
  * 
- * Standalone Subgraph-SAT-Solver CLI
+ * Standalone SubgraphSATSolver CLI
  * 
  * Nutzt die C++-Implementierung der kompletten Reduktionskette:
  *   SAT → 3-SAT → Clique → Subgraph-Isomorphismus
  * 
  * Usage:
- *   subgraph-sat-solver <input.cnf> [options]
- *   subgraph-sat-solver --help
+ *   SubgraphSATSolver <input.cnf> [options]
+ *   SubgraphSATSolver --help
  */
 
-#include "cnf.h"
-#include "reduction.h"
-#include "subgraph_sat_solver.h"
+#include "Cnf.h"
+#include "Reduction.h"
+#include "SubgraphSATSolver.h"
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -34,7 +34,7 @@ struct CommandLineArgs {
 };
 
 void print_help(const char* program_name) {
-    std::cout << "Subgraph-SAT-Solver v1.0\n";
+    std::cout << "SubgraphSATSolver v1.0\n";
     std::cout << "========================\n\n";
     std::cout << "Usage: " << program_name << " <input.cnf> [options]\n\n";
     std::cout << "Options:\n";
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
     
     // Banner
     std::cout << "╔════════════════════════════════════════╗\n";
-    std::cout << "║   Subgraph-SAT-Solver v1.0             ║\n";
+    std::cout << "║   SubgraphSATSolver v1.0             ║\n";
     std::cout << "║   Reduction: SAT → Subgraph-Isom       ║\n";
     std::cout << "╚════════════════════════════════════════╝\n\n";
     
