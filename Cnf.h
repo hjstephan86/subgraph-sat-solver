@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <memory>
 #include <cassert>
+#include <climits>
 
 namespace sat {
 

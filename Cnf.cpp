@@ -190,18 +190,16 @@ void CNFFormula::simplify() {
     
     for (auto& clause : clauses_) {
         // Prüfe auf Tautologie (a ∨ ¬a)
-        std::set<int> abs_literals;
+        std::set<Literal> seen_literals;
         bool is_tautology = false;
         
         for (Literal lit : clause) {
-            int var = std::abs(lit);
-            
-            // Prüfe ob Variable bereits mit entgegengesetztem Vorzeichen
-            if (abs_literals.count(-var)) {
+            // Prüfe ob das Gegenteil dieses Literals bereits gesehen wurde
+            if (seen_literals.count(-lit)) {
                 is_tautology = true;
                 break;
             }
-            abs_literals.insert(var);
+            seen_literals.insert(lit);
         }
         
         if (is_tautology) {
